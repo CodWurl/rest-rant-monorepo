@@ -4,10 +4,18 @@ const bcrypt = require ('bcrypt')
 
 const { User } = db
 
+
+//Restricting user from admin access
 router.post('/', async (req, res) => {
-    const user = await User.create(req.body)
+    let { password, ...rest } = req.body;
+    const user = await User.create({ 
+        ...rest, 
+        role: 'reviewer',
+        passwordDigest: await bcrypt.hash(password, 10)
+    })
     res.json(user)
-})
+})   
+
 
 
 router.get('/', async (req, res) => {
